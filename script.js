@@ -1,56 +1,91 @@
 const angleA = document.querySelector('#angle-a');
 const angleB = document.querySelector('#angle-b');
-const trianglePoints = { A: [200, 35], B: [350, 250], C: [50, 250] };
-const toRad = (degrees) => degrees * Math.PI / 180;
+const triangleSvg = document.querySelector('#triangle-svg');
+const triangleShape = document.querySelector('#triangle-shape');
+const svgNamespace = 'http://www.w3.org/2000/svg';
+const arcColors = ['#ff8967', '#43b99b', '#8c68df'];
+const radians = (degrees) => degrees * Math.PI / 180;
 
-function pointOnArc(vertex, startAngle, endAngle, radius) {
-  const middle = (startAngle + endAngle) / 2;
-  const start = [vertex[0] + radius * Math.cos(startAngle), vertex[1] + radius * Math.sin(startAngle)];
-  const end = [vertex[0] + radius * Math.cos(endAngle), vertex[1] + radius * Math.sin(endAngle)];
-  const sweep = endAngle - startAngle > Math.PI ? 1 : 0;
-  return { d: `M ${start[0]} ${start[1]} A ${radius} ${radius} 0 ${sweep} 1 ${end[0]} ${end[1]}`, label: [vertex[0] + (radius + 23) * Math.cos(middle), vertex[1] + (radius + 23) * Math.sin(middle)] };
+function makeSvgElement(tagName, attributes = {}) {
+  const element = document.createElementNS(svgNamespace, tagName);
+  Object.entries(attributes).forEach(([name, value]) => element.setAttribute(name, value));
+  return element;
 }
 
 function updateTriangle() {
   const a = Number(angleA.value);
+  const maximumB = 165 - a; // Keep angle C at least 15° so every selection is a valid triangle.
+  angleB.max = String(maximumB);
+  if (Number(angleB.value) > maximumB) angleB.value = String(maximumB);
   const b = Number(angleB.value);
   const c = 180 - a - b;
   document.querySelector('#out-a').textContent = `${a}°`;
   document.querySelector('#out-b').textContent = `${b}°`;
   document.querySelector('#out-c').textContent = `${c}°`;
-  document.querySelector('#label-a').textContent = `${a}°`;
-  document.querySelector('#label-b').textContent = `${b}°`;
-  document.querySelector('#label-c').textContent = `${c}°`;
   document.querySelector('#triangle-sum').textContent = `${a}° + ${b}° + ${c}° = 180°`;
 
-  // Keep the visual triangle honest: its angles follow the selected values.
-  const side = 300;
-  const height = side * Math.sin(toRad(a)) * Math.sin(toRad(b)) / Math.sin(toRad(c));
-  const baseY = 250;
-  const baseX = 200;
-  const xA = baseX - side * Math.sin(toRad(b)) * Math.cos(toRad(a)) / Math.sin(toRad(c));
-  const yA = baseY - height;
-  const points = `${xA},${yA} ${baseX + side / 2},${baseY} ${baseX - side / 2},${baseY}`;
-  document.querySelector('#triangle-shape').setAttribute('points', points);
+  // Draw to scale, then tightly fit the SVG viewBox around the triangle and labels.
+  const base = 400;
+  const A = [base * Math.sin(radians(b)) / Math.sin(radians(a)) * Math.cos(radians(c)), -base * Math.sin(radians(b)) / Math.sin(radians(a)) * Math.sin(radians(c))];
+  const B = [base, 0];
+  const C = [0, 0];
+  const vertices = [A, B, C];
+  const angles = [a, b, c];
+  triangleShape.setAttribute('points', vertices.map((point) => point.join(',')).join(' '));
+  document.querySelector('#triangle-description').textContent = `Triangle A has angle ${a} degrees, angle B is ${b} degrees, and angle C is ${c} degrees. Their sum is 180 degrees.`;
 
-  // For the angle markers, derive each corner's adjacent ray directions.
-  const vertices = [[xA, yA], [baseX + side / 2, baseY], [baseX - side / 2, baseY]];
-  const values = [a, b, c];
-  const arcIds = ['#arc-a', '#arc-b', '#arc-c'];
-  const labelIds = ['#label-a', '#label-b', '#label-c'];
-  vertices.forEach((v, i) => {
-    const other = vertices.filter((_, j) => j !== i);
-    let t1 = Math.atan2(other[0][1] - v[1], other[0][0] - v[0]);
-    let t2 = Math.atan2(other[1][1] - v[1], other[1][0] - v[0]);
-    let diff = (t2 - t1 + Math.PI * 2) % (Math.PI * 2);
-    if (diff > Math.PI) { [t1, t2] = [t2, t1]; diff = Math.PI * 2 - diff; }
-    const arc = pointOnArc(v, t1, t1 + diff, 27);
-    document.querySelector(arcIds[i]).setAttribute('d', arc.d);
-    const label = document.querySelector(labelIds[i]);
-    const factor = values[i] < 35 ? 1.8 : 1;
-    label.setAttribute('x', v[0] + (arc.label[0] - v[0]) * factor);
-    label.setAttribute('y', v[1] + (arc.label[1] - v[1]) * factor);
+  const groups = ['#angle-arcs', '#vertex-dots', '#angle-labels', '#vertex-labels'].map((selector) => document.querySelector(selector));
+  groups.forEach((group) => group.replaceChildren());
+  const [arcs, dots, angleLabels, vertexLabels] = groups;
+  const bounds = vertices.map(([x, y]) => [x, y]);
+  const centroid = vertices.reduce((sum, point) => [sum[0] + point[0] / 3, sum[1] + point[1] / 3], [0, 0]);
+
+  vertices.forEach((vertex, index) => {
+    const adjacent = vertices.filter((_, otherIndex) => otherIndex !== index);
+    const directions = adjacent.map((point) => {
+      const dx = point[0] - vertex[0]; const dy = point[1] - vertex[1];
+      const length = Math.hypot(dx, dy);
+      return [dx / length, dy / length];
+    });
+    const bisectorVector = [directions[0][0] + directions[1][0], directions[0][1] + directions[1][1]];
+    const bisectorLength = Math.hypot(...bisectorVector);
+    const bisector = [bisectorVector[0] / bisectorLength, bisectorVector[1] / bisectorLength];
+    const radius = Math.min(37, Math.max(20, base * Math.sin(radians(angles[index])) * .13));
+    const start = [vertex[0] + directions[0][0] * radius, vertex[1] + directions[0][1] * radius];
+    const end = [vertex[0] + directions[1][0] * radius, vertex[1] + directions[1][1] * radius];
+    const startAngle = Math.atan2(directions[0][1], directions[0][0]);
+    const endAngle = Math.atan2(directions[1][1], directions[1][0]);
+    const delta = ((endAngle - startAngle + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+    arcs.append(makeSvgElement('path', {
+      d: `M ${start[0]} ${start[1]} A ${radius} ${radius} 0 0 ${delta >= 0 ? 1 : 0} ${end[0]} ${end[1]}`,
+      class: 'angle-arc', stroke: arcColors[index]
+    }));
+
+    const labelRadius = radius + 25;
+    const anglePosition = [vertex[0] + bisector[0] * labelRadius, vertex[1] + bisector[1] * labelRadius];
+    const angleText = makeSvgElement('text', { x: anglePosition[0], y: anglePosition[1], class: 'angle-text' });
+    angleText.textContent = `${angles[index]}°`;
+    angleLabels.append(angleText);
+    bounds.push(anglePosition);
+
+    dots.append(makeSvgElement('circle', { cx: vertex[0], cy: vertex[1], r: 6, class: 'vertex-dot' }));
+    const outward = [vertex[0] - centroid[0], vertex[1] - centroid[1]];
+    const outwardLength = Math.hypot(...outward);
+    const vertexPosition = [vertex[0] + outward[0] / outwardLength * 35, vertex[1] + outward[1] / outwardLength * 35];
+    const vertexText = makeSvgElement('text', { x: vertexPosition[0], y: vertexPosition[1], class: 'vertex-text' });
+    vertexText.textContent = ['A', 'B', 'C'][index];
+    vertexLabels.append(vertexText);
+    bounds.push(vertexPosition);
   });
+
+  const xValues = bounds.map(([x]) => x);
+  const yValues = bounds.map(([, y]) => y);
+  const padding = 55;
+  const minX = Math.min(...xValues) - padding;
+  const minY = Math.min(...yValues) - padding;
+  const width = Math.max(...xValues) - Math.min(...xValues) + padding * 2;
+  const height = Math.max(...yValues) - Math.min(...yValues) + padding * 2;
+  triangleSvg.setAttribute('viewBox', `${minX} ${minY} ${width} ${height}`);
 
   const kind = [a, b, c].some((value) => value === 90) ? 'right-angled' : [a, b, c].some((value) => value > 90) ? 'obtuse' : 'acute';
   const description = kind === 'right-angled' ? 'one angle is exactly 90°.' : kind === 'obtuse' ? 'one angle is greater than 90°.' : 'all three angles are less than 90°.';
@@ -58,28 +93,30 @@ function updateTriangle() {
 }
 angleA.addEventListener('input', updateTriangle);
 angleB.addEventListener('input', updateTriangle);
-document.querySelector('#reset-triangle').addEventListener('click', () => { angleA.value = 60; angleB.value = 60; updateTriangle(); });
+document.querySelector('#reset-triangle').addEventListener('click', () => {
+  angleA.value = '60';
+  angleB.value = '60';
+  updateTriangle();
+});
 updateTriangle();
 
 const polygonNames = { 3: 'Triangle', 4: 'Quadrilateral', 5: 'Pentagon', 6: 'Hexagon', 8: 'Octagon' };
 function updatePolygon(sides) {
-  const cx = 150; const cy = 125; const radius = 92;
-  const points = Array.from({ length: sides }, (_, i) => {
-    const angle = -Math.PI / 2 + i * Math.PI * 2 / sides;
-    return `${cx + radius * Math.cos(angle)},${cy + radius * Math.sin(angle)}`;
+  const centerX = 150; const centerY = 125; const radius = 92;
+  const points = Array.from({ length: sides }, (_, index) => {
+    const angle = -Math.PI / 2 + index * Math.PI * 2 / sides;
+    return `${centerX + radius * Math.cos(angle)},${centerY + radius * Math.sin(angle)}`;
   }).join(' ');
   document.querySelector('#polygon-shape').setAttribute('points', points);
   const name = polygonNames[sides];
   const angleSum = (sides - 2) * 180;
-  const eachAngle = angleSum / sides;
-  const diagonals = sides * (sides - 3) / 2;
   document.querySelector('#shape-title').textContent = name;
   document.querySelector('#polygon-name').textContent = `REGULAR ${name.toUpperCase()}`;
   document.querySelector('#polygon-svg').setAttribute('aria-label', `Regular ${name.toLowerCase()} with ${sides} equal sides`);
   document.querySelector('#side-count').textContent = sides;
   document.querySelector('#angle-sum').textContent = `${angleSum}°`;
-  document.querySelector('#each-angle').textContent = `${eachAngle}°`;
-  document.querySelector('#diagonal-count').textContent = diagonals;
+  document.querySelector('#each-angle').textContent = `${angleSum / sides}°`;
+  document.querySelector('#diagonal-count').textContent = sides * (sides - 3) / 2;
 }
 document.querySelectorAll('.shape-choice').forEach((button) => {
   button.addEventListener('click', () => {
@@ -160,8 +197,12 @@ nextButton.addEventListener('click', () => {
     document.querySelector('#quiz-feedback').textContent = `You scored ${score} out of ${questions.length}.`;
     document.querySelector('#quiz-feedback').className = 'quiz-feedback good';
     nextButton.textContent = 'Try again';
-    nextButton.disabled = false;
-    nextButton.onclick = () => { questionIndex = 0; score = 0; nextButton.onclick = null; renderQuestion(); };
+    nextButton.onclick = () => {
+      questionIndex = 0;
+      score = 0;
+      nextButton.onclick = null;
+      renderQuestion();
+    };
   }
 });
 renderQuestion();

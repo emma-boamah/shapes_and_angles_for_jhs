@@ -7,6 +7,7 @@
   <meta name="description" content="Explore triangles, angles, and polygons with interactive visual activities made for JHS learners.">
   <title>Shapes &amp; Angles — JHS Math Lab</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="triangle-integrated.css">
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -41,42 +42,38 @@
       </div>
     </section>
 
-    <section class="section" id="explore">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">01 · TRIANGLE EXPLORER</p>
-          <h2>Every triangle adds up.</h2>
-          <a class="button secondary" href="triangle-explorer.html">Open full-page Triangle Explorer <span aria-hidden="true">↗</span></a>
+    <section class="section integrated-triangle" id="explore">
+      <div class="section-heading"><div><p class="eyebrow">01 · TRIANGLE EXPLORER</p><h2>Every triangle adds up.</h2></div><p>Change two angles. The third adjusts automatically. The diagram resizes to keep every vertex and angle label in view.</p></div>
+      <div class="large-explorer">
+        <div class="large-triangle-panel">
+          <div class="large-triangle-heading"><div><span class="eyebrow">YOUR TRIANGLE</span><h3>Angle sum = 180°</h3></div><span class="auto-fit-tag">AUTO-FIT VIEW</span></div>
+          <div class="large-triangle-stage">
+            <svg id="triangle-svg" viewBox="-280 -300 560 440" role="img" aria-labelledby="triangle-title triangle-description" preserveAspectRatio="xMidYMid meet">
+              <title id="triangle-title">Interactive triangle</title>
+              <desc id="triangle-description">A triangle with adjustable angles A, B, and C.</desc>
+              <polygon id="triangle-shape" points="0,-200 173,100 -173,100" />
+              <g id="angle-arcs" aria-hidden="true"></g>
+              <g id="vertex-dots" aria-hidden="true"></g>
+              <g id="angle-labels" aria-hidden="true"></g>
+              <g id="vertex-labels" aria-hidden="true"></g>
+            </svg>
+          </div>
+          <div class="large-sum-strip"><span>INTERIOR ANGLES</span><strong id="triangle-sum">60° + 60° + 60° = 180°</strong></div>
         </div>
-        <p>Change two angles. The third adjusts automatically—because a triangle’s interior angles always total 180°.</p>
-      </div>
-      <div class="explorer-card">
-        <div class="triangle-stage">
-          <svg id="triangle-svg" viewBox="0 0 400 290" role="img" aria-label="Interactive triangle showing its three interior angles">
-            <polygon id="triangle-shape" points="200,35 350,250 50,250" fill="#edf2ff" stroke="#4567e8" stroke-width="4" stroke-linejoin="round"/>
-            <path id="arc-a" fill="none" stroke="#ff8967" stroke-width="5" stroke-linecap="round"/>
-            <path id="arc-b" fill="none" stroke="#44b99b" stroke-width="5" stroke-linecap="round"/>
-            <path id="arc-c" fill="none" stroke="#8c68df" stroke-width="5" stroke-linecap="round"/>
-            <text id="label-a" class="angle-label" x="200" y="94" text-anchor="middle">60°</text>
-            <text id="label-b" class="angle-label" x="309" y="226" text-anchor="middle">60°</text>
-            <text id="label-c" class="angle-label" x="91" y="226" text-anchor="middle">60°</text>
-            <text x="193" y="23" class="vertex-label">A</text><text x="355" y="263" class="vertex-label">B</text><text x="31" y="263" class="vertex-label">C</text>
-          </svg>
-          <div class="sum-badge"><span>ANGLE SUM</span><strong id="triangle-sum">60° + 60° + 60° = 180°</strong></div>
-        </div>
-        <div class="controls-panel">
+        <aside class="large-controls-panel">
+          <p class="eyebrow">EXPERIMENT</p>
           <h3>Adjust your triangle</h3>
-          <p class="muted">Choose angle A and B. Angle C is calculated for you.</p>
+          <p class="large-help">Choose angles A and B. Angle C is calculated automatically. The three angles always total 180°.</p>
           <label class="range-label" for="angle-a"><span>Angle A</span><output id="out-a" for="angle-a">60°</output></label>
-          <input id="angle-a" type="range" min="20" max="140" value="60">
+          <input id="angle-a" type="range" min="15" max="150" value="60">
           <label class="range-label" for="angle-b"><span>Angle B</span><output id="out-b" for="angle-b">60°</output></label>
-          <input id="angle-b" type="range" min="20" max="150" value="60">
-          <div class="third-angle"><span>Angle C (180° − A − B)</span><strong id="out-c">60°</strong></div>
-          <p id="triangle-type" class="callout" aria-live="polite">This is an acute triangle: all three angles are less than 90°.</p>
+          <input id="angle-b" type="range" min="15" max="105" value="60">
+          <div class="large-third-angle"><span>Angle C <small>(180° − A − B)</small></span><strong id="out-c">60°</strong></div>
+          <p class="large-callout" id="triangle-type" aria-live="polite">This is an acute triangle: all three angles are less than 90°.</p>
           <button class="button secondary" id="reset-triangle" type="button">Reset to 60° each</button>
-        </div>
+          <div class="large-learning-note"><span aria-hidden="true">✦</span><p><strong>Try this:</strong> Make one angle larger. How must the other angles change? Can you make a right-angled triangle?</p></div>
+        </aside>
       </div>
-      <div class="fact-row"><span class="fact-icon">💡</span><p><strong>Try this:</strong> Drag one slider. What happens to angle C when angle A gets bigger? Can you make a right-angled triangle?</p></div>
     </section>
 
     <section class="section polygon-section" id="polygon-lab">
