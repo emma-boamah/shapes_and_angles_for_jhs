@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f8ff">
+  <meta name="description" content="Explore how a triangle's angles add up to 180 degrees in this interactive JHS geometry tool.">
+  <title>Triangle Explorer — JHS Math Lab</title>
+  <link rel="stylesheet" href="triangle-explorer.css">
+  <script src="triangle-explorer.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">△</span><span>JHS <strong>Math Lab</strong></span></a>
+    <a class="back-link" href="index.html">← All activities</a>
+    <span class="level-tag">JHS · Geometry</span>
+  </header>
+  <main>
+    <section class="intro">
+      <p class="eyebrow">INTERACTIVE GEOMETRY · TRIANGLES</p>
+      <h1>Every triangle <span>adds up.</span></h1>
+      <p>Adjust the angles and watch the triangle reshape itself. The diagram automatically fits the screen, so all three vertices stay visible—even for very narrow triangles.</p>
+    </section>
+    <section class="explorer" aria-label="Interactive triangle angle explorer">
+      <div class="visual-panel">
+        <div class="visual-heading"><div><span class="eyebrow">YOUR TRIANGLE</span><h2>Angle sum = 180°</h2></div><span class="fit-tag">AUTO-FIT VIEW</span></div>
+        <div class="triangle-stage">
+          <svg id="triangle-svg" viewBox="-280 -300 560 440" role="img" aria-labelledby="triangle-title triangle-description" preserveAspectRatio="xMidYMid meet">
+            <title id="triangle-title">Interactive triangle</title>
+            <desc id="triangle-description">A triangle with adjustable angles A, B, and C.</desc>
+            <polygon id="triangle-shape" points="0,-200 173,100 -173,100" />
+            <g id="angle-arcs" aria-hidden="true"></g>
+            <g id="vertex-dots" aria-hidden="true"></g>
+            <g id="angle-labels" aria-hidden="true"></g>
+            <g id="vertex-labels" aria-hidden="true"></g>
+          </svg>
+        </div>
+        <div class="sum-strip"><span>INTERIOR ANGLES</span><strong id="triangle-sum">60° + 60° + 60° = 180°</strong></div>
+      </div>
+      <aside class="controls-panel">
+        <p class="eyebrow">EXPERIMENT</p>
+        <h2>Adjust your triangle</h2>
+        <p class="help-text">Choose angles A and B. Angle C is calculated automatically. The three angles always total 180°.</p>
+        <label class="range-label" for="angle-a"><span>Angle A</span><output id="out-a" for="angle-a">60°</output></label>
+        <input id="angle-a" type="range" min="15" max="150" value="60">
+        <label class="range-label" for="angle-b"><span>Angle B</span><output id="out-b" for="angle-b">60°</output></label>
+        <input id="angle-b" type="range" min="15" max="105" value="60">
+        <div class="third-angle"><span>Angle C <small>(180° − A − B)</small></span><strong id="out-c">60°</strong></div>
+        <p class="callout" id="triangle-type" aria-live="polite">This is an acute triangle: all three angles are less than 90°.</p>
+        <button class="reset-button" id="reset-triangle" type="button">Reset to 60° each</button>
+        <div class="learning-note"><span aria-hidden="true">✦</span><p><strong>Try this:</strong> Make one angle larger. How must the other angles change? Can you make a right-angled triangle?</p></div>
+      </aside>
+    </section>
+    <p class="tip"><strong>Why does the picture resize?</strong> The triangle is drawn to scale, then the view automatically zooms to include every vertex and angle label.</p>
+  </main>
+  <footer><span>JHS Math Lab · Triangle Explorer</span><a href="index.html">Back to Shapes &amp; Angles</a></footer>
+</body>
+</html>
