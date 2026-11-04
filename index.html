@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7ff">
+  <meta name="description" content="Explore triangles, angles, and polygons with interactive visual activities made for JHS learners.">
+  <title>Shapes &amp; Angles — JHS Math Lab</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to learning activities</a>
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="Shapes and Angles home"><span class="brand-mark" aria-hidden="true">△</span><span>JHS <strong>Math Lab</strong></span></a>
+    <nav aria-label="Main navigation">
+      <a href="#explore">Explore</a><a href="#polygon-lab">Polygon Lab</a><a href="#quiz">Quick Quiz</a>
+    </nav>
+    <span class="level-tag">JHS · Geometry</span>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="home">
+      <div class="hero-copy">
+        <p class="eyebrow">GEOMETRY, MADE VISIBLE</p>
+        <h1>Shapes have<br><span>stories to tell.</span></h1>
+        <p class="hero-text">Explore triangles, discover angle rules, and experiment with polygons. Move the controls and see the maths change right before your eyes.</p>
+        <a class="button primary" href="#explore">Start exploring <span aria-hidden="true">↓</span></a>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <svg viewBox="0 0 360 300" role="presentation">
+          <polygon points="177,34 324,241 40,241" fill="#d8e6ff" stroke="#4567e8" stroke-width="5" stroke-linejoin="round"/>
+          <path d="M177 34 L177 241" stroke="#4567e8" stroke-width="2" stroke-dasharray="7 7"/>
+          <path d="M161 57 A30 30 0 0 1 193 57" fill="none" stroke="#ff8e69" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="177" cy="34" r="7" fill="#ff8e69"/><circle cx="324" cy="241" r="7" fill="#43b99b"/><circle cx="40" cy="241" r="7" fill="#43b99b"/>
+          <text x="169" y="23" class="art-label">A</text><text x="329" y="252" class="art-label">B</text><text x="22" y="252" class="art-label">C</text>
+        </svg>
+        <div class="float-note note-top">∠A + ∠B + ∠C <strong>= 180°</strong></div>
+        <div class="float-note note-bottom">Look closer. Learn more.</div>
+      </div>
+    </section>
+
+    <section class="section" id="explore">
+      <div class="section-heading"><div><p class="eyebrow">01 · TRIANGLE EXPLORER</p><h2>Every triangle adds up.</h2></div><p>Change two angles. The third adjusts automatically—because a triangle’s interior angles always total 180°.</p></div>
+      <div class="explorer-card">
+        <div class="triangle-stage">
+          <svg id="triangle-svg" viewBox="0 0 400 290" role="img" aria-label="Interactive triangle showing its three interior angles">
+            <polygon id="triangle-shape" points="200,35 350,250 50,250" fill="#edf2ff" stroke="#4567e8" stroke-width="4" stroke-linejoin="round"/>
+            <path id="arc-a" fill="none" stroke="#ff8967" stroke-width="5" stroke-linecap="round"/>
+            <path id="arc-b" fill="none" stroke="#44b99b" stroke-width="5" stroke-linecap="round"/>
+            <path id="arc-c" fill="none" stroke="#8c68df" stroke-width="5" stroke-linecap="round"/>
+            <text id="label-a" class="angle-label" x="200" y="94" text-anchor="middle">60°</text>
+            <text id="label-b" class="angle-label" x="309" y="226" text-anchor="middle">60°</text>
+            <text id="label-c" class="angle-label" x="91" y="226" text-anchor="middle">60°</text>
+            <text x="193" y="23" class="vertex-label">A</text><text x="355" y="263" class="vertex-label">B</text><text x="31" y="263" class="vertex-label">C</text>
+          </svg>
+          <div class="sum-badge"><span>ANGLE SUM</span><strong id="triangle-sum">60° + 60° + 60° = 180°</strong></div>
+        </div>
+        <div class="controls-panel">
+          <h3>Adjust your triangle</h3>
+          <p class="muted">Choose angle A and B. Angle C is calculated for you.</p>
+          <label class="range-label" for="angle-a"><span>Angle A</span><output id="out-a" for="angle-a">60°</output></label>
+          <input id="angle-a" type="range" min="20" max="140" value="60">
+          <label class="range-label" for="angle-b"><span>Angle B</span><output id="out-b" for="angle-b">60°</output></label>
+          <input id="angle-b" type="range" min="20" max="150" value="60">
+          <div class="third-angle"><span>Angle C (180° − A − B)</span><strong id="out-c">60°</strong></div>
+          <p id="triangle-type" class="callout" aria-live="polite">This is an acute triangle: all three angles are less than 90°.</p>
+          <button class="button secondary" id="reset-triangle" type="button">Reset to 60° each</button>
+        </div>
+      </div>
+      <div class="fact-row"><span class="fact-icon">💡</span><p><strong>Try this:</strong> Drag one slider. What happens to angle C when angle A gets bigger? Can you make a right-angled triangle?</p></div>
+    </section>
+
+    <section class="section polygon-section" id="polygon-lab">
+      <div class="section-heading"><div><p class="eyebrow">02 · POLYGON LAB</p><h2>Meet the polygons.</h2></div><p>A polygon is a closed, flat shape made from straight line segments. Pick one to investigate its sides and angles.</p></div>
+      <div class="polygon-card">
+        <div class="shape-picker" role="group" aria-label="Choose a polygon">
+          <button type="button" class="shape-choice active" data-sides="3" aria-pressed="true"><span class="shape-icon">△</span><span>Triangle</span></button>
+          <button type="button" class="shape-choice" data-sides="4" aria-pressed="false"><span class="shape-icon">□</span><span>Quadrilateral</span></button>
+          <button type="button" class="shape-choice" data-sides="5" aria-pressed="false"><span class="shape-icon">⬠</span><span>Pentagon</span></button>
+          <button type="button" class="shape-choice" data-sides="6" aria-pressed="false"><span class="shape-icon">⬡</span><span>Hexagon</span></button>
+          <button type="button" class="shape-choice" data-sides="8" aria-pressed="false"><span class="shape-icon">⯃</span><span>Octagon</span></button>
+        </div>
+        <div class="polygon-content">
+          <div class="polygon-visual"><svg id="polygon-svg" viewBox="0 0 300 260" role="img" aria-label="Regular triangle"><polygon id="polygon-shape" points="150,35 345,260 -45,260" fill="#e6f7f2" stroke="#36a88a" stroke-width="4" stroke-linejoin="round" transform="translate(0,-18)"/></svg><span id="polygon-name" class="visual-caption">REGULAR TRIANGLE</span></div>
+          <div class="polygon-facts">
+            <p class="eyebrow">SHAPE FACTS</p><h3 id="shape-title">Triangle</h3>
+            <div class="fact-grid"><div><span>Number of sides</span><strong id="side-count">3</strong></div><div><span>Interior angle sum</span><strong id="angle-sum">180°</strong></div><div><span>Each angle* </span><strong id="each-angle">60°</strong></div><div><span>Number of diagonals</span><strong id="diagonal-count">0</strong></div></div>
+            <p class="formula-note">*For a regular polygon, all sides and angles are equal.</p>
+            <div class="formula-box"><span>Interior angle sum formula</span><strong>(number of sides − 2) × 180°</strong><small>For a quadrilateral: (4 − 2) × 180° = 360°</small></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section quiz-section" id="quiz">
+      <div class="section-heading"><div><p class="eyebrow">03 · CHECK YOUR THINKING</p><h2>Quick geometry quiz.</h2></div><p>Three questions to see what you���ve learned. Take your time—you can try again.</p></div>
+      <div class="quiz-card">
+        <div class="quiz-progress"><span id="quiz-progress-text">QUESTION 1 OF 3</span><div class="progress-track"><span id="progress-fill"></span></div></div>
+        <h3 id="question-text">What is the sum of the interior angles in a triangle?</h3>
+        <div id="answer-options" class="answer-options" role="group" aria-label="Answer choices"></div>
+        <p id="quiz-feedback" class="quiz-feedback" aria-live="polite"></p>
+        <div class="quiz-footer"><span id="score-text">Score: 0</span><button class="button primary" id="next-question" type="button" disabled>Check answer</button></div>
+      </div>
+    </section>
+
+    <section class="finish-banner"><div><p class="eyebrow">KEEP EXPLORING</p><h2>Math makes more sense<br>when you can play with it.</h2><p>Change a number, test an idea, and see what stays true.</p></div><a class="button light" href="#explore">Explore again <span aria-hidden="true">↑</span></a></section>
+  </main>
+  <footer><span>JHS Math Lab · Shapes &amp; Angles</span><span>Made for curious learners ✦</span></footer>
+</body>
+</html>
